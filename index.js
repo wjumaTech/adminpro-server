@@ -4,18 +4,19 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { dbConnection } = require('./database/config');
+const { errorHandler } = require('./utils/errorHandler');
 
 const app = express();
 const port = process.env.PORT || 4000;
 
 app.use(cors());
+app.use(express.json());
 
-app.get('/api/v1/users', (req, res, next) => {
-  res.json({
-    ok: true,
-    message: 'Main page works!'
-  })
-})
+app.use('/api/v1/usuarios', require('./routes/usuario'));
+app.use('/api/v1/auth/login', require('./routes/auth'));
+
+//- Errors
+app.use(errorHandler);
 
 dbConnection()
   .then(() => {
