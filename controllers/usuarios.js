@@ -5,17 +5,29 @@ const Usuario = require('../models/usuario');
 
 /**
  * @desc Devuelve una coleccion de usuarios 
- * @route /api/v1/usuarios 
+ * @route /api/v1/usuarios?desde=""&hasta="" 
  * @access public 
  */
 exports.getUsuarios = async (req, res, next) => {
+
+  const page = req.query.page || 1;
+  const sort = req.query.sort || 0;
+  const size = req.query.size || 5;
+
   try {
-    const usuarios = await Usuario.find();
+
+    const [usuarios, total] = await Promise.all([
+      Usuario.find().skip(sort).limit(size),
+      Usuario.countDocuments()
+    ])
+
     res.json({
       ok: true,
       message: 'Obteniendo usuarios',
-      usuarios
-    })
+      usuarios,
+      total
+    });
+
   } catch (error) {
     next(new Error(error));
   }
@@ -37,13 +49,13 @@ exports.crearUsuario = async (req, res, next) => {
 
     const existeUsuario = await Usuario.findOne({ email });
     console.log(existeUsuario)
-    if(existeUsuario) {
+    if (existeUsuario) {
       return next(new Error('EL correo ya esta registrado'));
     }
 
     const usuario = new Usuario({ nombre, password: hashedPassword, email });
     await usuario.save();
-    
+
     //- Generar token
     const token = await GenerarToken(usuario._id)
 
@@ -61,7 +73,7 @@ exports.crearUsuario = async (req, res, next) => {
     next(new Error(err));
   }
 
-} 
+}
 
 /**
  * @desc Actualiza un usuario tomando como referencia su id
@@ -73,20 +85,20 @@ exports.actualizarUsuario = async (req, res, next) => {
   const { uid } = req.params;
 
   try {
-    
+
     const usuarioDB = await Usuario.findById(uid);
-    if(!usuarioDB) {
+    if (!usuarioDB) {
       return next(new Error('EL usuario no esta registrado'));
     }
 
     //- Actualizaciones
     const campos = req.body;
     //- Validar si existe el nuevo email
-    if( usuarioDB.email === req.body.email ) {
+    if (usuarioDB.email === req.body.email) {
       delete campos.email;
     } else {
       const existeUsuario = await Usuario.findOne({ email: req.body.email });
-      if( existeUsuario ) {
+      if (existeUsuario) {
         return next(new Error('EL email ya existe'));
       }
     }
@@ -103,7 +115,7 @@ exports.actualizarUsuario = async (req, res, next) => {
   } catch (error) {
     next(new Error(error));
   }
-  
+
 }
 
 /**
@@ -113,10 +125,10 @@ exports.actualizarUsuario = async (req, res, next) => {
  */
 exports.borrarUsuario = async (req, res, next) => {
   const { uid } = req.params;
-  try { 
+  try {
 
     const usuarioDB = await Usuario.findById({ _id: uid });
-    if(!usuarioDB) {
+    if (!usuarioDB) {
       return next(new Error('EL usuario no esta registrado'));
     }
 
@@ -125,7 +137,7 @@ exports.borrarUsuario = async (req, res, next) => {
       ok: true,
       message: 'Usuario eliminado'
     })
-  } catch(error) {
+  } catch (error) {
     next(new Error(error));
   }
 }

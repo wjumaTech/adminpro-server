@@ -16,6 +16,9 @@ app.use('/api/v1/usuarios', require('./routes/usuario'));
 app.use('/api/v1/auth', require('./routes/auth'));
 app.use('/api/v1/hospitales', require('./routes/hospitales'));
 app.use('/api/v1/medicos', require('./routes/medicos'));
+app.use('/api/v1/fakers', require('./routes/fakers'));
+app.use('/api/v1/buscar', require('./routes/searchs'));
+app.use('/api/v1/upload', require('./routes/uploads'));
 
 //- Errors
 app.use(errorHandler);
@@ -25,7 +28,7 @@ dbConnection()
 
     app.listen(
       port,
-      console.log('Server: '.blue+`running on port ${port}`)
+      console.log('Server: '.blue + `running on port ${port}`)
     )
   })
   .catch(error => {

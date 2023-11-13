@@ -1,6 +1,4 @@
 const Medico = require('../models/medico');
-const Hospital = require('../models/hospital');
-const Usuario = require('../models/usuario');
 
 /**
  * @desc Devuelve una coleccion de medicos
@@ -10,8 +8,8 @@ const Usuario = require('../models/usuario');
 exports.getMedico = async (req, res, next) => {
   try {
     const medicos = await Medico.find()
-                    .populate('usuario', 'nombre -_id')
-                    .populate('hospital', 'nombre -_id');
+                    .populate('usuario', 'nombre id')
+                    .populate('hospital', 'nombre id');
     res.json({
       ok: true,
       medicos
