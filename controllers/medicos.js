@@ -7,12 +7,18 @@ const Usuario = require('../models/usuario');
  * @route /api/v1/medico 
  * @access private 
  */
-exports.getMedico = (req, res, next) => {
-
-  res.json({
-    ok: true,
-    message: 'Obteniendo listado de Medico'
-  })
+exports.getMedico = async (req, res, next) => {
+  try {
+    const medicos = await Medico.find()
+                    .populate('usuario', 'nombre -_id')
+                    .populate('hospital', 'nombre -_id');
+    res.json({
+      ok: true,
+      medicos
+    });
+  } catch (error) {
+    next(new Error(error));
+  }
 }
 
 /**
@@ -20,12 +26,19 @@ exports.getMedico = (req, res, next) => {
  * @route /api/v1/medico 
  * @access private 
  */
-exports.crearMedico = (req, res, next) => {
-
-  res.json({
-    ok: true,
-    message: 'Creando medico'
-  })
+exports.crearMedico = async (req, res, next) => {
+  try {
+    const medico = new Medico(req.body);
+    medico.usuario = req.uid;
+    medico.hospital = req.query.hospital;
+    await medico.save();
+    res.json({
+      ok: true,
+      medico
+    })
+  } catch (error) {
+    next(new Error(error));
+  }
 }
 
 /**

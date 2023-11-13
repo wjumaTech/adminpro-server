@@ -6,12 +6,17 @@ const Usuario = require('../models/usuario');
  * @route /api/v1/hospitales 
  * @access private 
  */
-exports.getHospitales = (req, res, next) => {
+exports.getHospitales = async (req, res, next) => {
+  try {
+    const hospitales = await Hospital.find({}).populate('usuario', 'nombre email -_id').exec();
+    res.json({
+      ok: true,
+      hospitales
+    })
+  } catch (error) {
+    return next(new Error(error))
+  }
 
-  res.json({
-    ok: true,
-    message: 'Obteniendo listado de hospitales'
-  })
 }
 
 /**
@@ -19,12 +24,22 @@ exports.getHospitales = (req, res, next) => {
  * @route /api/v1/hospitales 
  * @access private 
  */
-exports.crearHospitales = (req, res, next) => {
+exports.crearHospitales = async (req, res, next) => {
 
-  res.json({
-    ok: true,
-    message: 'Creando hospital'
-  })
+  const { nombre } = req.body;
+  const { uid } = req; 
+
+  try {
+    const hospital = new Hospital({ nombre, usuario: uid });
+    await hospital.save();
+    res.json({
+      ok: true,
+      hospital
+    });
+  } catch (error) {
+    return next(new Error(error))
+  }
+
 }
 
 /**

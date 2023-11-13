@@ -114,6 +114,12 @@ exports.actualizarUsuario = async (req, res, next) => {
 exports.borrarUsuario = async (req, res, next) => {
   const { uid } = req.params;
   try { 
+
+    const usuarioDB = await Usuario.findById({ _id: uid });
+    if(!usuarioDB) {
+      return next(new Error('EL usuario no esta registrado'));
+    }
+
     await Usuario.findByIdAndDelete(uid);
     res.json({
       ok: true,

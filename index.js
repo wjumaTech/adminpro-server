@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/v1/usuarios', require('./routes/usuario'));
-app.use('/api/v1/auth/login', require('./routes/auth'));
+app.use('/api/v1/auth', require('./routes/auth'));
 app.use('/api/v1/hospitales', require('./routes/hospitales'));
 app.use('/api/v1/medicos', require('./routes/medicos'));
 

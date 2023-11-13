@@ -10,7 +10,7 @@ const router = Router();
 router.get('/', ValidarToken, getHospitales);
 
 router.post('/', [
-  ValidarToken,
+  ValidarToken, 
   check('nombre', 'El nombre es requerido').not().isEmpty(),
   validarCampo
 ], crearHospitales);

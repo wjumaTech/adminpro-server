@@ -9,7 +9,6 @@ const router = Router();
 router.get('/', ValidarToken, getUsuarios);
 
 router.post('/', [
-  ValidarToken,
   check('nombre', 'EL nombre es requerido').not().isEmpty(),
   check('password', 'La contrasenia es requerida').not().isEmpty(),
   check('email', 'EL correo es requerido').not().isEmpty().isEmail(),
