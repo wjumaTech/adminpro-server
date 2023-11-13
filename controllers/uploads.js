@@ -2,6 +2,7 @@ const Usuario = require('../models/usuario');
 const Medico = require('../models/medico');
 const Hospital = require('../models/hospital');
 
+const { v4: uuidv4 } = require('uuid');
 
 /**
  * @desc Carga de archivos
@@ -33,7 +34,20 @@ exports.fileUpload = async (req, res, next) => {
     return next(new Error('Tipo de archivo no permitido, por favor carga una imagen valida'));
   }
 
+  //- Generar el nombre del archivo debe de se aleatorio y path donde depositaremos la imagen
+  const fileName = uuidv4() + '.' + extensionArchivo;
+  const path = `./uploads/${tipo}/${fileName}`;
 
 
-  res.json({ ok: true })
+  image.mv(path, (err) => {
+    if (err) {
+      return next(new Error('Error al mover la imagen'));
+    }
+
+    //- Actualizar base de datos
+
+
+    res.json({ ok: true, message: 'Archivo subido', fileName })
+  });
+
 }
