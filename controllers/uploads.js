@@ -1,9 +1,30 @@
+const path = require('path');
+const fs = require('fs');
 const Usuario = require('../models/usuario');
 const Medico = require('../models/medico');
 const Hospital = require('../models/hospital');
 
 const { v4: uuidv4 } = require('uuid');
 const { actualizarImagen } = require('../helpers/ActualizarImagen');
+const { response } = require('express');
+
+
+/**
+ * @desc Muestra la imagen seleccionada
+ * @route /api/v1/upload/:tipo/:foto
+ * @access public 
+ */
+exports.mostrarImagen = (req, res = response, next) => {
+  const tipo = req.params.tipo;
+  const foto = req.params.foto;
+  const rutaImagen = path.join(__dirname, `../uploads/${tipo}/${foto}`);
+
+  if (!fs.existsSync(rutaImagen)) {
+    return res.sendFile(path.join(__dirname, `../uploads/no-image.png`))
+  }
+
+  res.sendFile(rutaImagen);
+}
 
 /**
  * @desc Carga de archivos
@@ -47,7 +68,7 @@ exports.fileUpload = async (req, res, next) => {
 
     try {
       //- Actualizar base de datos
-      await actualizarImagen(id, fileName, tipo, next);
+      await actualizarImagen(id, fileName, tipo);
       res.json({ ok: true, message: 'Archivo subido', fileName })
     } catch (error) {
       next(new Error(error))

@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 
-exports.GenerarToken = ( uid='' ) => {
+exports.GenerarToken = (uid = '') => {
 
   return new Promise((resolve, reject) => {
 
@@ -10,10 +10,10 @@ exports.GenerarToken = ( uid='' ) => {
     }
 
     jwt.sign(payload, process.env.JWT_CLIENT_ID, {
-      expiresIn: '1h'
+      expiresIn: '12h'
     }, (err, token) => {
-  
-      if(err) {
+
+      if (err) {
         reject(err);
       } else {
         resolve(token);
