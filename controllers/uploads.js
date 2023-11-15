@@ -3,6 +3,7 @@ const Medico = require('../models/medico');
 const Hospital = require('../models/hospital');
 
 const { v4: uuidv4 } = require('uuid');
+const { actualizarImagen } = require('../helpers/ActualizarImagen');
 
 /**
  * @desc Carga de archivos
@@ -24,8 +25,8 @@ exports.fileUpload = async (req, res, next) => {
   }
 
   // Procesar la imagen
-  const image = req.files.image;
-  const nombreCortado = image.name.split('.');
+  const imagen = req.files.imagen;
+  const nombreCortado = imagen.name.split('.');
   const extensionArchivo = nombreCortado[nombreCortado.length - 1];
 
   //- Validar extension del archivo 
@@ -39,15 +40,18 @@ exports.fileUpload = async (req, res, next) => {
   const path = `./uploads/${tipo}/${fileName}`;
 
 
-  image.mv(path, (err) => {
+  imagen.mv(path, async (err) => {
     if (err) {
       return next(new Error('Error al mover la imagen'));
     }
 
-    //- Actualizar base de datos
-
-
-    res.json({ ok: true, message: 'Archivo subido', fileName })
+    try {
+      //- Actualizar base de datos
+      await actualizarImagen(id, fileName, tipo, next);
+      res.json({ ok: true, message: 'Archivo subido', fileName })
+    } catch (error) {
+      next(new Error(error))
+    }
   });
 
 }

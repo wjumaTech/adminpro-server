@@ -18,7 +18,7 @@ app.use('/api/v1/hospitales', require('./routes/hospitales'));
 app.use('/api/v1/medicos', require('./routes/medicos'));
 app.use('/api/v1/fakers', require('./routes/fakers'));
 app.use('/api/v1/buscar', require('./routes/searchs'));
-app.use('/api/v1/upload', require('./routes/uploads'));
+app.use('/api/v1/uploads', require('./routes/uploads'));
 
 //- Errors
 app.use(errorHandler);
