@@ -12,19 +12,19 @@ exports.login = async (req, res, next) => {
 
     //- Verificar si el usuario existe 
     const usuarioDB = await Usuario.findOne({ email: req.body.email });
-    if(!usuarioDB) {
+    if (!usuarioDB) {
       return next(new Error('El usuario no existe'));
     }
 
     //- Validar la contrasenia
     const isPasswordValid = bcrypt.compareSync(req.body.password, usuarioDB.password);
-    if(!isPasswordValid) {
+    if (!isPasswordValid) {
       return next(new Error('La contrasenia es invalida'));
     }
 
     //- Crear token
-    const token = await GenerarToken( usuarioDB._id );
- 
+    const token = await GenerarToken(usuarioDB._id);
+
     res.json({
       ok: true,
       message: 'Usuario logueado',
@@ -34,4 +34,17 @@ exports.login = async (req, res, next) => {
   } catch (error) {
     next(new Error(error));
   }
+}
+
+/**
+ * @desc Google Signin
+ * @route POST /api/v1/auth/login/google
+ * @access public
+ */
+exports.loginGoogle = async (req, res, next) => {
+
+  res.json({
+    ok: true,
+    token: req.body.token
+  })
 }
