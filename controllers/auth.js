@@ -1,6 +1,9 @@
-const { GenerarToken } = require('../helpers/GenerarToken');
-const Usuario = require('../models/usuario');
 const bcrypt = require('bcryptjs');
+
+const Usuario = require('../models/usuario');
+
+const { GenerarToken } = require('../helpers/GenerarToken');
+const { GoogleTokenVerify } = require('../helpers/GoogleTokenVerify');
 
 /**
  * @desc Iniciar sesion
@@ -43,8 +46,37 @@ exports.login = async (req, res, next) => {
  */
 exports.loginGoogle = async (req, res, next) => {
 
-  res.json({
-    ok: true,
-    token: req.body.token
-  })
+  try {
+    const { name, picture, email } = await GoogleTokenVerify(req.body.token);
+
+    //- Registrar usuario
+    let usuario;
+    const usuarioDB = await Usuario.findOne({ email });
+
+    if (!usuarioDB) {
+      usuario = new Usuario({
+        nombre: name,
+        email,
+        img: picture,
+        password: '@@'
+      });
+    } else {
+      usuario = usuarioDB;
+      usuario.google = true;
+    }
+
+    //- Guardar el usuario
+    await usuario.save();
+
+    //- Crear token
+    const token = await GenerarToken(usuario._id);
+
+    res.json({
+      success: true,
+      name, picture, email, token
+    });
+  } catch (error) {
+    return next(new Error(error));
+  }
+
 }

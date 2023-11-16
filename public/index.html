@@ -11,23 +11,41 @@
   
   <h1>Iniciar con Google</h1>
 
-  <div id="buttonDiv" style="width: 300px;"></div>
+  <div id="buttonDiv"></div>
 
   <script>
+
     function handleCredentialResponse(response) {
-      console.log("Encoded JWT ID token: " + response.credential);
+      // console.log("Encoded JWT ID token: " + response.credential);
+
+      var url = 'http://localhost:3000/api/v1/auth/login/google';
+
+      fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: response.credential })
+      })
+      .then(resp => resp.json())
+      .then(data => console.log(data))
+      .catch(console.log);
     }
+
     window.onload = function () {
+
       google.accounts.id.initialize({
         client_id: "214063896391-9j7pnc9rjumarb8lq4k9jjl83j6sf66u.apps.googleusercontent.com",
         callback: handleCredentialResponse
       });
+
       google.accounts.id.renderButton(
         document.getElementById("buttonDiv"),
-        { theme: "outline", size: "large" }  // customization attributes
+        { theme: "outline", size: "large", width: "200px" }  // customization attributes
       );
+
       google.accounts.id.prompt(); // also display the One Tap dialog
+      
     }
+
   </script>
  
 
