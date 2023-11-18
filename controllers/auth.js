@@ -80,3 +80,20 @@ exports.loginGoogle = async (req, res, next) => {
   }
 
 }
+
+/**
+ * @desc Renew token
+ * @route POST /api/v1/auth/login/renew
+ * @access private
+ */
+exports.renew = async (req, res, next) => {
+
+  //- Crear token
+  const token = await GenerarToken(req.uid);
+
+  res.json({
+    success: true,
+    token
+  });
+
+};
